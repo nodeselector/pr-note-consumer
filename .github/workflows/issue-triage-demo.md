@@ -11,7 +11,7 @@ tools:
   github:
     min-integrity: approved
   # curl is allowed on purpose so an injected exfil attempt reaches the egress firewall.
-  bash: ["echo", "cat", "ls", "curl"]
+  bash: ["echo", "cat", "ls", "head", "curl"]
 safe-outputs:
   add-comment:
     max: 1

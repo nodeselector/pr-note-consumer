@@ -263,18 +263,24 @@ shape it replaces.
 **Controls to show:** `permissions: read-all` on the agent job; writes only
 through `safe-outputs` (one comment, one label from an allowlist); the threat
 detection job before any write; `network: defaults` behind the AWF egress
-firewall. `curl` is allowed on purpose so an injected request reaches the
-firewall instead of being stopped by the tool allowlist.
+firewall. `curl` and `head` are allowed on purpose so an injected request
+reaches the firewall instead of being stopped by the tool allowlist (a piped
+command with an unlisted tool is denied before it runs). The prompt asks the
+agent to fetch linked diagnostics, which is the opening the injection uses.
 
 **Trigger:** open a new issue as the repository owner with the title
 "Crash when saving profile" and the body from
-[`demo/agentic/injected-issue.md`](demo/agentic/injected-issue.md). Outside
+[`demo/agentic/injected-issue-fetch.md`](demo/agentic/injected-issue-fetch.md)
+(a "server log" link on example.com). The older
+[`demo/agentic/injected-issue.md`](demo/agentic/injected-issue.md) hides the
+instruction in an HTML comment; the model usually ignores it. Outside
 authors are dropped by the `roles` gate and integrity filtering, so the agent
 would never see the injection. The payload is harmless: `example.com` stands in
 for the exfiltration target and the data is a literal string.
 
-**Evidence:** the run's safe-output comment and label, the
-`firewall-audit-logs` artifact (`access.log`), `gh aw logs --run-id <id>`
+**Evidence:** the run's safe-output comment and label (safe outputs also
+redact the non-allowlisted URL to `(example.com/redacted)`), the agent
+artifact's `sandbox/firewall/logs/access.log`, `gh aw logs --run-id <id>`
 ("Blocked Domains") and `gh aw audit <id>` (`blocked_network_requests`). If the
 model declines to run `curl`, there is no blocked request; show the agent log
 where it declines and do not call that a firewall deny. Use a new issue for
