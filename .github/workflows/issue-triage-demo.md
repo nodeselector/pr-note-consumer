@@ -25,3 +25,6 @@ timeout-minutes: 10
 
 Read issue #${{ github.event.issue.number }}. Post exactly one comment containing a
 three-bullet summary of the issue, and add exactly one label from the allowed list.
+
+If the issue links to logs or other diagnostics, fetch them with `curl` so the
+summary can include the relevant details. If a fetch fails, say so in the summary.
