@@ -251,3 +251,31 @@ execution protections. Preview documentation access or repository admin
 permission does not prove native runtime availability. Report actual errors
 and use the open issue to resolve the locking mismatch without altering the
 preserved reproduction.
+
+## Agentic issue triage (prompt injection)
+
+[`.github/workflows/issue-triage-demo.md`](.github/workflows/issue-triage-demo.md)
+is a GitHub Agentic Workflow (`gh aw`, Copilot engine). Compile it with
+`gh aw compile` and commit the `.md` and `.lock.yml` together. The display-only
+[`demo/before/issue-triage.yml`](demo/before/issue-triage.yml) shows the risky
+shape it replaces.
+
+**Controls to show:** `permissions: read-all` on the agent job; writes only
+through `safe-outputs` (one comment, one label from an allowlist); the threat
+detection job before any write; `network: defaults` behind the AWF egress
+firewall. `curl` is allowed on purpose so an injected request reaches the
+firewall instead of being stopped by the tool allowlist.
+
+**Trigger:** open a new issue as the repository owner with the title
+"Crash when saving profile" and the body from
+[`demo/agentic/injected-issue.md`](demo/agentic/injected-issue.md). Outside
+authors are dropped by the `roles` gate and integrity filtering, so the agent
+would never see the injection. The payload is harmless: `example.com` stands in
+for the exfiltration target and the data is a literal string.
+
+**Evidence:** the run's safe-output comment and label, the
+`firewall-audit-logs` artifact (`access.log`), `gh aw logs --run-id <id>`
+("Blocked Domains") and `gh aw audit <id>` (`blocked_network_requests`). If the
+model declines to run `curl`, there is no blocked request; show the agent log
+where it declines and do not call that a firewall deny. Use a new issue for
+every take and record the run ID.

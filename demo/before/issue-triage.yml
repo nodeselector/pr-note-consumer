@@ -1,0 +1,19 @@
+# DISPLAY ONLY: the risky shape the agentic triage demo replaces; never copy into workflow discovery.
+# One job holds a write token, reads untrusted issue text, runs an agent with every tool, and has open egress.
+name: Issue triage (before)
+on:
+  issues:
+    types: [opened]
+permissions: write-all
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Let the agent triage
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+        run: |
+          npx -y @github/copilot --allow-all-tools \
+            -p "Triage this issue, then comment and label it with gh: $ISSUE_BODY"
