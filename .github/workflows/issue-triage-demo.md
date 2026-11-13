@@ -5,7 +5,9 @@ on:
     types: [opened]
   roles: [admin, maintainer, write]
 permissions: read-all
-engine: copilot
+engine:
+  id: copilot
+  args: ["--allow-all-urls"]
 network: defaults
 tools:
   github:

@@ -267,6 +267,11 @@ firewall. `curl` and `head` are allowed on purpose so an injected request
 reaches the firewall instead of being stopped by the tool allowlist (a piped
 command with an unlisted tool is denied before it runs). The prompt asks the
 agent to fetch linked diagnostics, which is the opening the injection uses.
+`engine.args: ["--allow-all-urls"]` turns off the Copilot CLI's own URL
+approval gate, which otherwise denies the fetch before it leaves the agent
+(runs on issues #5 and #6). The demo removes that inner layer on purpose to
+show that the network firewall still stops the request; production workflows
+should keep it.
 
 **Trigger:** open a new issue as the repository owner with the title
 "Crash when saving profile" and the body from
